@@ -21,7 +21,7 @@ fi
 wget $GETH_LINK
 unzip $GETH_ZIP
 mv ./$GETH_ZIP/geth-linux-amd64 /usr/sbin/geth
-fi
+
 
 cd
 rm -rf tools.sh
