@@ -1,19 +1,34 @@
 #!/usr/bin/env sh
+COIN_NAME='ROLLER'
+GETH_LINK='https://github.com/roller-project/roller/releases/download/1.2.1/geth-linux-amd64.zip'
+GETH_ZIP='geth-linux-amd64.zip'
+cd
+echo "****************************************************************************"
+echo "* Ubuntu 16.04 is the recommended operating system for this install.       *"
+echo "*                                                                          *"
+echo "* This script will install and configure your Roller masternodes.          *"
+echo "****************************************************************************"
+echo && echo && echo
 apt-get install unzip wget git
+if [ -f ~/$GETH_ZIP ] || [ -f ~/geth-linux-amd64/ ] || [ -f /etc/systemd/system/masternode.service] || [ -f tmp/masternode.service] || [ -f /usr/sbin/geth];
+then
+echo 'Remove your old file'
+rm -rf $GETH_ZIP geth-linux-amd64/ /usr/sbin/geth /etc/systemd/system/masternode.service tmp/masternode.service
+fi
+wget $GETH_LINK
+unzip $GETH_ZIP
+mv ~/geth-linux-amd64/geth-linux-amd64 /usr/sbin/geth
 
-wget https://github.com/roller-project/roller/releases/download/1.2.1/geth-linux-amd64.zip
-unzip ./geth-linux-amd64.zip
-mv ./geth-linux-amd64/geth-linux-amd64 /usr/sbin/geth
+cd
+rm -rf tools.sh
 wget https://raw.githubusercontent.com/roller-project/masternode/master/tools.sh
 echo '=========================='
 echo 'Configuring service...'
 echo '=========================='
-
 cat > /tmp/masternode.service << EOL
 [Unit]
-Description=Roller Client -- masternode service
+Description=$COIN_NAME Client -- masternode service
 After=network.target
-
 [Service]
 Type=simple
 Restart=always
@@ -23,13 +38,14 @@ ExecStart=/usr/sbin/geth --masternode --rpcport 8545 --rpcvhosts *
 WantedBy=default.target
 EOL
 
-fi
+sudo \mv /tmp/masternode.service /etc/systemd/system
+sudo systemctl enable masternode && systemctl start masternode
+systemctl status masternode --no-pager --full
 
-        sudo \mv /tmp/masternode.service /etc/systemd/system
-        sudo systemctl enable masternode && systemctl start masternode
-        systemctl status masternode --no-pager --full
-else
-    echo 'systemd service will not be created.'
-fi
-
-echo 'Done.'
+cd ~
+chmod +x tools.sh
+echo "\033[0;31m"
+./tools.sh --enodeId
+./tools.sh --nodePort
+./tools.sh --nodeIp
+echo '\033[1;33mComplete server configuration\nThen go to : http://cms.roller.today\nClick Masternode -> Add Node\033[0m'
