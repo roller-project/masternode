@@ -23,13 +23,8 @@ ExecStart=/usr/sbin/geth --masternode --rpcport 8545 --rpcvhosts *
 WantedBy=default.target
 EOL
 
-fi
-
-        sudo \mv /tmp/masternode.service /etc/systemd/system
-        sudo systemctl enable masternode && systemctl start masternode
-        systemctl status masternode --no-pager --full
-else
-    echo 'systemd service will not be created.'
-fi
+sudo mv /tmp/masternode.service /etc/systemd/system
+sudo systemctl enable masternode && systemctl start masternode
+systemctl status masternode --no-pager --full
 
 echo 'Done.'
