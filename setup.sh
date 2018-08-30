@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+apt-get update
 COIN_NAME='ROLLER'
 GETH_LINK='https://github.com/roller-project/roller/releases/download/1.2.1/geth-linux-amd64.zip'
 GETH_ZIP='geth-linux-amd64.zip'
